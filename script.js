@@ -1,60 +1,62 @@
+let humanScore = 0;
+let computerScore = 0;
+
 function getComputerChoice() {
   const choices = ["rock", "paper", "scissors"];
   const randomIndex = Math.floor(Math.random() * choices.length);
   return choices[randomIndex];
 }
 
-//console.log(getComputerChoice());
-function getHumanChoice() {
-  const input = prompt("Choose: rock , paper or scissors!");
-  return input.toLowerCase();
-}
-//console.log(getHumanChoice());
-let humanChoice = 0;
-  let computerChoice = 0;
 function playRound(humanChoice, computerChoice) {
   if (humanChoice === computerChoice) {
-    console.log("Stalemate😁 " + humanChoice);
+    return `Stalemate 😁 Both chose ${humanChoice}`;
   } else if (
     (humanChoice === "rock" && computerChoice === "scissors") ||
     (humanChoice === "paper" && computerChoice === "rock") ||
     (humanChoice === "scissors" && computerChoice === "paper")
   ) {
-    console.log("You win!😎 " + humanChoice + " beats " + computerChoice);
-    return "human";
+    humanScore++;
+    return `You win! 😎 ${humanChoice} beats ${computerChoice}`;
   } else {
-    console.log("Computer wins😜 " + computerChoice + " beats " + humanChoice);
-    return "computer";
+    computerScore++;
+    return `Computer wins 😜 ${computerChoice} beats ${humanChoice}`;
   }
 }
 
-const playerSelection = getHumanChoice();
-const computerSelection = getComputerChoice();
+function updateUI(message) {
+  const resultDiv = document.getElementById("result");
+  const scoreDiv = document.getElementById("score");
 
-function playround() {
-    let humanScore = 0;
-  let computerScore = 0;
+  resultDiv.textContent = message;
+  scoreDiv.textContent = `Score: You ${humanScore} - ${computerScore} Computer`;
 
-  for (let i = 1; i <= 5; i++) {
-    const playerSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
-    const result = playRound(playerSelection, computerSelection);
-
-    if (result === "human") {
-      ++humanScore;
-    } else if (result === "computer") {
-      ++computerScore;
-    }
+  if (humanScore === 5 || computerScore === 5) {
+    const winner =
+      humanScore === 5 ? "🎉 You won the game!" : "💻 Computer won the game!";
+    scoreDiv.textContent += `\n${winner}`;
+    disableButtons();
   }
-
-  if (humanScore > computerScore) {
-    console.log("You win the game! 🏆");
-  } else if (computerScore > humanScore) {
-    console.log("Computer wins the game! 💻");
-  } else {
-    console.log("It's a draw! 🤝");
-  }
-
-  console.log(`Final Score: You ${humanScore} - ${computerScore} Computer`);
 }
-playround();
+
+function disableButtons() {
+  document.getElementById("rock").disabled = true;
+  document.getElementById("paper").disabled = true;
+  document.getElementById("scissors").disabled = true;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("rock").addEventListener("click", () => {
+    const result = playRound("rock", getComputerChoice());
+    updateUI(result);
+  });
+
+  document.getElementById("paper").addEventListener("click", () => {
+    const result = playRound("paper", getComputerChoice());
+    updateUI(result);
+  });
+
+  document.getElementById("scissors").addEventListener("click", () => {
+    const result = playRound("scissors", getComputerChoice());
+    updateUI(result);
+  });
+});
